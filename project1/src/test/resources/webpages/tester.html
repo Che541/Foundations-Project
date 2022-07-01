@@ -311,7 +311,7 @@ function createRow(defectObj){
                                 <option value="Accepted">Accepted</option>
                                 <option value="Declined">Declined</option>
                             </select></td>
-                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
     } else if (defectObj.status === "Accepted"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
                             <td>${defectObj.desc}</td>
@@ -321,7 +321,7 @@ function createRow(defectObj){
                                 <option value="Fixed">Fixed</option>
                                 <option value="Shelved">Shelved</option>
                             </select></td>
-                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
        
 
     } else {

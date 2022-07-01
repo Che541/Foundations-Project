@@ -347,15 +347,23 @@ function createRow(defectObj){
 }
 
 function updateRow(defectId, selectorValue){
-    if (selectorValue === "Accepted"){
+    if (selectorValue === "Accepted" && role !== "manager"){
         document.getElementById(`statusTD${defectId}`).innerHTML = "Accepted";
         document.getElementById(`selector${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
                                                                     <option value="Fixed">Fixed</option>
                                                                     <option value="Shelved">Shelved</option>`;
+    } else if(role === "manager"){
+        document.getElementById(`statusTD${defectId}`).innerHTML = "Accepted";
+        document.getElementById(`selector${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
+                                                                    <option value="Pending">Pending</option>
+                                                                    <option value="Fixed">Fixed</option>
+                                                                    <option value="Shelved">Shelved</option>`;
+
     } else {
         let row = document.getElementById(`row${defectId}`);
         row.remove();
     }
+    
 }
 
 async function createProject() {

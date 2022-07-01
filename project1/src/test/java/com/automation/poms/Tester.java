@@ -15,7 +15,7 @@ public class Tester {
     @FindBy(id = "update52984")
     public WebElement updateDefectButton;
 
-    /* 
+    
     @FindBy(id = "projectTitle")
     public WebElement titleInput;
     @FindBy(id = "projectAbout")
@@ -32,7 +32,7 @@ public class Tester {
     public WebElement caseFeatureInput;
     @FindBy(id = "createCaseButton")
     public WebElement createCaseButton;
-    */
+    
 
     //constructor
     public Tester(WebDriver driver){
