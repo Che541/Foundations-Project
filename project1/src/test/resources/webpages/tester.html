@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tester Page</title>
+</head>
+<body>
+    <h1>Tester Page</h1>
+    <table id="defectTable">
+        <tr>
+            <th colspan="5"><h1>Defects</h1></th>
+        </tr>
+        <tr>
+            <th>Defect Id</th>
+            <th>Description</th>
+            <th>Current Status</th>
+            <th>New Status</th>
+            <th></th>
+        </tr>
+    </table>
+
+    
+    <ul>
+        <li>
+            <details>
+                <summary style="font-size:30px;"><b>Projects</b></summary>
+                <ul id="projectList">
+               
+                </ul>
+
+            </details>
+        </li>
+    </ul>
+
+    
+    <table>
+        <tr>
+            <th colspan="3"><h1>Create New Project</h1></th>
+        </tr>
+        <tr>
+            <th>Project Title</th>
+            <th>About</th>
+            <th> </th>
+        </tr>
+        <tr>
+            <td><textarea type="text" id="projectTitle"></textarea></td>
+            <td><textarea type="text" id="projectAbout"></textarea></td>
+            <td><button id="createProjectButton" onclick="createProject()">Create</button></td>
+        </tr>
+    </table>
+
+    
+    <table>
+        <tr>
+            <th colspan="3"><h1>Create New Test Summary Report</h1></th>
+        </tr>
+        <tr>
+            <th>Project</th>
+            <th>Reason</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><select id="projectSelector">
+                
+            </select></td>
+            <td><textarea type="text" id="summaryReason"></textarea></td>
+            <td><button id="createSummaryButton" onclick="createSummary()">Create</button></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="4"><h1>Create New Test Case</h1></th>
+        </tr>
+        <tr>
+            <th>Summary</th>
+            <th>Feature</th>
+            <th>Result</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><select id="summarySelector">
+            </select></td>
+            <td><textarea type="text" id="caseFeature"></textarea></td>
+            <td><select id="caseResultSelector">
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+                <option value="Flaky">Flaky</option>
+            </select></td>
+            <td><button id="createCaseButton" onclick="createCase()">Create</button></td>
+        </tr>
+    </table>
+
+
+
+
+</body>
+<script>
+    const username = sessionStorage.getItem("username");
+const fname = sessionStorage.getItem("fname");
+const lname = sessionStorage.getItem("fname");
+const role = sessionStorage.getItem("fname");
+//document.getElementById("name").innerHTML = username;
+
+getDefects();
+getProjects();
+if(role === "manager"){
+    getTesters();
+}
+
+async function getDefects(){
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/defects");
+
+    if (httpResponse.status !== 200){
+        console.log("getDefects Failed");
+        return;
+    }
+
+    let responseBody = await httpResponse.json();
+    
+    for (let i = 0; i < responseBody.length; i++){
+        let defectObj = responseBody[i];
+        if(defectObj.assignedTo === username || role === "manager"){
+            createRow(defectObj);   
+        }
+    }
+}
+
+async function getTesters(){
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/employees");
+
+    if (httpResponse.status !== 200){
+        console.log("getEmployees Failed");
+        return;
+    }
+
+    let responseBody = await httpResponse.json();
+    
+    for (let i = 0; i < responseBody.length; i++){
+        let employeeObj = responseBody[i];
+        if(employeeObj.role === "Tester"){
+            document.getElementById("selectTester").innerHTML += `<option value="${employeeObj.username}">${employeeObj.fname} ${employeeObj.lname}</option>`;  
+        }
+    }
+}
+
+async function getProjects(){
+    const projectList = document.getElementById("projectList");
+    
+    const projectSelector = document.getElementById("projectSelector");
+
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/projects");
+
+    if (httpResponse.status !== 200){
+        console.log("getProjects Failed");
+        return;
+    }
+
+    let responseBody = await httpResponse.json();
+
+    projectSelector.innerHTML = "";
+    projectList.innerHTML = "";
+    for (let i = 0; i < responseBody.length; i++){
+        let projectObj = responseBody[i];
+        const node = document.createElement("li");
+       
+        node.innerHTML = `<details>
+                            <summary>${projectObj.title}</summary>
+                            <ul>
+                                <li>Id: ${projectObj.projectId}</li>
+                                <li>About: ${projectObj.about}</li>
+                                <li><details>
+                                    <summary>Test Summary Reports</summary>
+                                    <ul id="project${projectObj.projectId}Summaries"></ul>
+                                </details></li>
+
+                            </ul>
+                        </details>`;
+        projectList.appendChild(node);
+        projectSelector.innerHTML += `<option value="${projectObj.projectId}">${projectObj.title}</option>`;
+        getSummaries(projectObj.projectId);
+    }
+
+}
+
+async function getSummaries(projectId){
+    const summaryList = document.getElementById(`project${projectId}Summaries`);
+   
+    const summarySelector = document.getElementById("summarySelector");
+    
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/summaries");
+
+    if (httpResponse.status !== 200){
+        console.log("getSummaries Failed");
+        return;
+    }
+
+    let responseBody = await httpResponse.json();
+
+    summaryList.innerHTML = "";
+    summarySelector.innerHTML = "";
+    
+    for (let i = 0; i < responseBody.length; i++){
+        let summaryObj = responseBody[i];
+        const node = document.createElement("li");
+        summarySelector.innerHTML += `<option value="${summaryObj.summaryId}">${summaryObj.summaryId}</option>`;
+        
+        if (summaryObj.projectId === projectId){
+            
+            node.innerHTML = `<details>
+                                <summary>${summaryObj.summaryId}</summary>
+                                <ul>
+                                    <li>Reason: ${summaryObj.reasonForTesting}</li>
+                                    <li><details>
+                                        <summary>Test Cases</summary>
+                                        <ul id="summary${summaryObj.summaryId}Cases"></ul>
+                                    </details></li>
+                                </ul>
+                            </details>`;
+                      
+            summaryList.appendChild(node);
+            
+            getCases(summaryObj.summaryId);          
+        }
+    }
+    
+}
+
+async function getCases(summaryId){
+    const caseList = document.getElementById(`summary${summaryId}Cases`);
+    
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/cases");
+
+    if (httpResponse.status !== 200){
+        console.log("getCases Failed");
+        return;
+    }
+
+    let responseBody = await httpResponse.json();
+
+    caseList.innerHTML = "";
+    for (let i = 0; i < responseBody.length; i++){
+        let caseObj = responseBody[i];
+        const node = document.createElement("li");
+        node.setAttribute("id", `li${caseObj.caseId}`);
+        
+        if (caseObj.summaryId === summaryId && (caseObj.testedBy === username || caseObj.testedBy === null || username === "manager")){
+            
+            node.innerHTML = `<details>
+                                <summary>${caseObj.caseId}</summary>
+                                <ul>
+                                    <li>Tested By: ${caseObj.testedBy}</li>
+                                    <li>Feature Tested: ${caseObj.featureTested}</li>
+                                    <li>Result: ${caseObj.result}</li>
+                                    <li><button id="delete${caseObj.caseId}" onclick="deleteCase(${caseObj.caseId})">Delete</button></li>
+                                </ul>
+                            </details>`;
+            caseList.appendChild(node);       
+        }
+    }
+}
+
+async function updateDefect(defectId){
+    let selectorId = "selector" + defectId;
+    let selectorValue = document.getElementById(selectorId).value;
+    let updateInfo = {
+        status: selectorValue
+    }
+
+    let updateJSON = JSON.stringify(updateInfo);
+
+    let config = {
+        method: "PATCH", 
+        headers: {'Content-Type':"application/json"},
+        body: updateJSON
+    }
+
+    let httpResponse = await fetch(`https://bugcatcher.coe.revaturelabs.com/5/defects/${defectId}`, config);
+
+    if (httpResponse.status === 204){
+        updateRow(defectId, selectorValue);
+    }
+}
+
+function createRow(defectObj){
+    const defectTable = document.getElementById("defectTable");
+    const node = document.createElement("tr");
+   
+    node.setAttribute("id", `row${defectObj.defectId}`);
+
+    if (role === "manager"){
+        node.innerHTML =   `<td>${defectObj.defectId}</td>
+                            <td>${defectObj.desc}</td>
+                            <td>${defectObj.assignedTo}</td>
+                            <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
+                            <td><select id="selector${defectObj.defectId}">
+                                <option value="Pending">Pending</option>
+                                <option value="Accepted">Accepted</option>
+                                <option value="Declined">Declined</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Shelved">Shelved</option>
+                            </select></td>
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+    }else if (defectObj.status === "Pending"){
+        node.innerHTML =   `<td>${defectObj.defectId}</td>
+                            <td>${defectObj.desc}</td>
+                            <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
+                            <td><select id="selector${defectObj.defectId}">
+                                <option value="Accepted">Accepted</option>
+                                <option value="Declined">Declined</option>
+                            </select></td>
+                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+    } else if (defectObj.status === "Accepted"){
+        node.innerHTML =   `<td>${defectObj.defectId}</td>
+                            <td>${defectObj.desc}</td>
+                            <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
+                            <td><select id="selector${defectObj.defectId}">
+                                <option value="Rejected">Rejected</option>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Shelved">Shelved</option>
+                            </select></td>
+                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+       
+
+    } else {
+        node.innerHTML =   `<td>${defectObj.defectId}</td>
+                            <td>${defectObj.desc}</td>
+                            <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
+                            <td></td>
+                            <td></td>`;
+    } 
+    defectTable.appendChild(node);
+}
+
+function updateRow(defectId, selectorValue){
+    if (selectorValue === "Accepted"){
+        document.getElementById(`statusTD${defectId}`).innerHTML = "Accepted";
+        document.getElementById(`selector${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
+                                                                    <option value="Fixed">Fixed</option>
+                                                                    <option value="Shelved">Shelved</option>`;
+    } else {
+        let row = document.getElementById(`row${defectId}`);
+        row.remove();
+    }
+}
+
+async function createProject() {
+    let projectInfo = {
+        title: document.getElementById("projectTitle").value,
+        about: document.getElementById("projectAbout").value
+    }
+
+    let projectJSON = JSON.stringify(projectInfo);
+
+    let config = {
+        method: "POST", 
+        headers: {'Content-Type':"application/json"},
+        body: projectJSON
+    }
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/projects", config);
+
+    if(httpResponse.status === 200){ 
+        let responseBody = await httpResponse.json(); 
+        alert("Project successfully posted!");
+    } else {
+        let responseBody = await httpResponse.json(); 
+        alert(responseBody.detail);
+    }
+
+    getProjects();
+}
+
+async function createSummary() {
+    let summaryInfo = {
+        projectId: document.getElementById("projectSelector").value,
+        startDate: 0,
+        endDate: 0,
+        featuresInScope: ["string"],
+        testEnvironmentDesc: "string",
+        objectives: ["Performance"],
+        reasonForTesting: document.getElementById("summaryReason").value
+    }
+
+    let summaryJSON = JSON.stringify(summaryInfo);
+
+    let config = {
+        method: "POST", 
+        headers: {'Content-Type':"application/json"},
+        body: summaryJSON
+    }
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/summaries", config);
+
+    if(httpResponse.status === 201){ 
+        let responseBody = await httpResponse.json(); 
+        alert("Summary successfully posted!");
+    } else {
+        let responseBody = await httpResponse.json(); 
+        alert(responseBody.detail);
+    }
+
+    getProjects();
+}
+
+async function createCase() {
+    
+    let caseInfo = {
+        summaryId: document.getElementById("summarySelector").value,
+        featureTested: document.getElementById("caseFeature").value,
+        testedBy: username,
+        desc: "string",
+        isAutomated: true,
+        result: document.getElementById("caseResultSelector").value,
+        posOrNeg: "Positive",
+        boxType: "Whitebox"
+    }
+
+    let caseJSON = JSON.stringify(caseInfo);
+
+    let config = {
+        method: "POST", 
+        headers: {'Content-Type':"application/json"},
+        body: caseJSON
+    }
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/cases", config);
+
+    if(httpResponse.status === 201){ 
+        let responseBody = await httpResponse.json(); 
+        alert("Case successfully posted!");
+    } else {
+        let responseBody = await httpResponse.json(); 
+        alert(responseBody.detail);
+    }
+
+    getProjects();
+}
+
+async function deleteCase(caseId){
+
+    let config = {
+        method: "DELETE" 
+    }
+    
+    let httpResponse = await fetch(`https://bugcatcher.coe.revaturelabs.com/5/cases/${caseId}`, config);
+
+    if(httpResponse.status === 204){ 
+        const element = document.getElementById(`li${caseId}`);
+        element.remove();
+        alert("Case successfully deleted!");
+    } else {
+        let responseBody = await httpResponse.json(); 
+        alert(responseBody.detail);
+    } 
+}
+
+async function Assign() {
+    let defectInfo = {
+        assignedTo: document.getElementById("selectTester").value,
+        dateReported: 0,
+        desc: document.getElementById("defectName").value,
+        stepsToReproduce: "string",
+        severity: "Low",
+        priority: "Low"
+    }
+
+    let defectJSON = JSON.stringify(defectInfo);
+
+    let config = {
+        method: "POST", 
+        headers: {'Content-Type':"application/json"},
+        body: defectJSON
+    }
+
+    let httpResponse = await fetch("https://bugcatcher.coe.revaturelabs.com/5/defects", config);
+
+    if(httpResponse.status === 201){ 
+        let responseBody = await httpResponse.json(); 
+        alert("Defect successfully posted!");
+    } else {
+        let responseBody = await httpResponse.json(); 
+        alert(responseBody.detail);
+    }
+}
+</script>
+</html>

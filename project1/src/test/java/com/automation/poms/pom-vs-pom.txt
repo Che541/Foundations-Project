@@ -1,0 +1,7 @@
+Remember:
+
+pom.xml stands for project object model.
+Maven uses it to create and test our project.
+Tells Maven how to build things.  
+The poms here stand for page object model. 
+They are java representations of the page. 

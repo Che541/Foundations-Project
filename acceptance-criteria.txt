@@ -1,0 +1,167 @@
+# Acceptance Criteria
+# Project 1 
+# June 15, 2022
+# Che Lenart-Zavala
+
+# Manager Acceptance Criteria
+
+	FEATURE: Managers should be able to login to access their homepages.
+
+		SCENARIO: As a manager I want to sign in so I can view my custom homepage. 
+	
+			Given the employee is on the login page
+			When the manager enters his correct username
+			When the manage enters his correct password
+			When the employee clicks the login button 
+			Then 	the manager should be logged in to the manager homepage 
+	
+	FEATURE: Managers should be able to create defects
+	
+		SCENARIO: As a manager I want to create defects
+
+			Given the manager is logged in to the manager homepage
+			When the manager enters the defect name
+			When the manager selects a tester
+			When the manager clicks the assign button
+			Then the new defect is created.
+
+	FEATURE: Managers should be able to assign defects
+
+		SCENARIO: As a manager I want to assign a defect to a tester.
+			
+			Given the manager is logged in to the manager homepage
+			When the manager enters the defect name
+			When the manager selects a tester
+			When the manager clicks the assign button
+			Then the defect is assigned to a tester
+
+# Tester Acceptance Criteria 
+	
+	FEATURE: Testers should be able to login to access their homepages.
+
+		SCENARIO: As a tester I want to sign in so I can view my custom homepage. 
+	
+			Given the employee is on the login page
+			When the tester enters his correct username
+			When the tester enters his correct password
+			When the employee clicks the login button 
+			Then the tester should be logged in to the tester homepage 
+
+	FEATURE: Testers should be able to view defects assigned to them
+
+		SCENARIO: As a tester I want to view defects assigned to me.
+	
+			Given the tester is logged in to the tester homepage
+			Then the tester should be able to view defects assigned to them
+
+	FEATURE: Testers should be able to update defects.
+
+		SCENARIO: As a tester I want to accept a defect
+
+			Given the tester is logged in to the tester homepage
+			Given the tester has a pending defect assigned to him
+			When the tester selects the accept option
+			When the tester clicks the update button
+			Then the tester should accept the defect
+
+		SCENARIO: As a tester I want to decline a defect
+		
+			Given the tester is logged in to the tester homepage
+			Given the tester has a pending defect assigned to him
+			When the tester selects the decline option
+			When the tester clicks the update button
+			Then the tester should decline the defect
+
+		SCENARIO: As a tester I want to reject a defect
+
+			Given the tester is logged in to the tester homepage
+			Given the tester has an accepted defect assigned to him
+			When the tester selects the reject option
+			When the tester clicks the update button
+			Then the tester should reject the defect
+
+		SCENARIO: As a tester I want to declare a defect as fixed
+
+			Given the tester is logged in to the tester homepage
+			Given the tester has an accepted defect assigned to him
+			When the tester selects the fixed option
+			When the tester clicks the update button
+			Then the tester should declare the defect as fixed
+
+		SCENARIO: As a tester I want to shelve a defect
+
+			Given the tester is logged in to the tester homepage
+			Given the tester has an accepted defect assigned to him
+			When the tester selects the shelved option
+			When the tester clicks the update button
+			Then the tester should shelve the defect
+
+#Backlog acceptance criteria 
+	
+	FEATURE: Testers should be able create projects
+
+		SCENARIO: As a tester I want to create a project
+
+			Given the tester is logged in to the tester homepage
+			When the tester enters a project title
+			When the tester enters info about the project
+			When the tester clicks the create project button
+			Then the new project is created
+
+	FEATURE: Testers should be able to create test summary reports and attach them to a project
+
+		SCENARIO: As a tester I want to create a test summary report and attach them to a project
+
+			Given the tester is logged in to the tester homepage
+			When the tester selects a project to attach the test summary report to
+			When the tester enters a reason for testing
+			When the tester clicks the create summary button
+			Then the new summary is created 
+
+	FEATURE: Testers should be able to create test cases for a test summary report
+
+		SCENARIO: As a tester I want to create a test case and attach it to a test summary report
+
+			Given the tester is logged in to the tester homepage
+			When the tester selects a test summary report to attach the test case to
+			When the tester enters the feature tested
+			When the tester selects a result
+			When the testers clicks the create test case button
+			Then the new test case is created 
+
+	FEATURE: Testers should be able to delete test cases
+
+		SCENARIO: As a tester I want to delete a test case
+		
+			Given the tester is logged in to the tester homepage
+			When the tester clicks the delete test case button
+			Then the test case is deleted 
+
+	FEATURE: Testers should be able to finalize test summary reports
+
+		SCENARIO: As a tester I want to finalize a test summary report 
+	
+			Given the tester is logged in to the tester homepage
+			Given the tester created a test summary report
+			Then the test summary report is finalized 
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			

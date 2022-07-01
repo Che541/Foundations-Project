@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Manager Page</title>
+</head>
+<body>
+    <h1 id="name">Manager Page</h1>
+
+    <table id="defectTable">
+        <tr>
+            <th colspan="6"><h1>Defects</h1></th>
+        </tr>
+        <tr>
+            <th>Defect Id</th>
+            <th>Description</th>
+            <th>Assigned To</th>
+            <th>Current Status</th>
+            <th>New Status</th>
+            <th></th>
+        </tr>
+    </table>
+
+    <ul>
+        <li>
+            <details>
+                <summary style="font-size:30px;"><b>Projects</b></summary>
+                <ul id="projectList">
+               
+                </ul>
+
+            </details>
+        </li>
+    </ul>
+
+    <table>
+        <tr>
+            <th colspan="3"><h1>Create Defect</h1></th>
+        </tr>
+        <tr>
+            <th>Defect Name</th><th>Select Tester</th><th> </th>
+        </tr>
+        <tr>
+            <td><textarea type="text" id="defectName"></textarea></textarea></td>
+            <td><select id="selectTester">
+            </select></td>
+            <td><button id="assignButton" onclick="Assign()">Assign</button></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="3"><h1>Create New Project</h1></th>
+        </tr>
+        <tr>
+            <th>Project Title</th>
+            <th>About</th>
+            <th> </th>
+        </tr>
+        <tr>
+            <td><textarea type="text" id="projectTitle"></textarea></td>
+            <td><textarea type="text" id="projectAbout"></textarea></td>
+            <td><button id="createProjectButton" onclick="createProject()">Create</button></td>
+        </tr>
+    </table>
+
+    
+    <table>
+        <tr>
+            <th colspan="3"><h1>Create New Test Summary Report</h1></th>
+        </tr>
+        <tr>
+            <th>Project</th>
+            <th>Reason</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><select id="projectSelector">
+                
+            </select></td>
+            <td><textarea type="text" id="summaryReason"></textarea></td>
+            <td><button id="createSummaryButton" onclick="createSummary()">Create</button></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="4"><h1>Create New Test Case</h1></th>
+        </tr>
+        <tr>
+            <th>Summary</th>
+            <th>Feature</th>
+            <th>Result</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><select id="summarySelector">
+            </select></td>
+            <td><textarea type="text" id="caseFeature"></textarea></td>
+            <td><select id="caseResultSelector">
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+                <option value="Flaky">Flaky</option>
+            </select></td>
+            <td><button id="createCaseButton" onclick="createCase()">Create</button></td>
+        </tr>
+    </table>
+</body>
+<script src="script.js">
+</script>
+</html>
