@@ -4,7 +4,7 @@ Feature: Managers should be able to login to access their homepages
 
 		Given the employee is on the login page
 		When the manager enters his correct username
-		When the manage enters his correct password
+		When the manager enters his correct password
 		When the employee clicks the login button 
 		Then the manager should be logged in to the manager homepage 
 

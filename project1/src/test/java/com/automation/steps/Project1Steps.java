@@ -74,7 +74,7 @@ public class Project1Steps {
         TestRunner.manager.clickAssignButton();
     }
 
-    @Then("the new defect is created")
+    @Then("the new defect is created and assigned")
     public void the_new_defect_is_created(){
         boolean alertExists;
         if (TestRunner.wait.until(ExpectedConditions.alertIsPresent()) == null){
