@@ -129,7 +129,7 @@ public class Project1Steps {
     }
 
 	@Then("the tester should be able to view defects assigned to them")
-    public void the_tester_should_be_able_to_view_defects_assigned_to_them() {   
+    public void the_tester_should_be_able_to_view_defects_assigned_to_them() {  
         Boolean isPresent = TestRunner.driver.findElements(By.id("selector52984")).size() > 0;
         Assert.assertEquals(true, isPresent);   
     }
@@ -147,9 +147,9 @@ public class Project1Steps {
     @Then("the tester should accept the defect")
     public void the_tester_should_accept_the_defect(){
         WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Accepted"));
         String status = elem.getAttribute("innerHTML");
         Assert.assertEquals("Accepted", status); 
-
     }
 
 

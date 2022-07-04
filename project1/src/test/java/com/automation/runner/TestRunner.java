@@ -17,6 +17,7 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(features = "classpath:features", glue = "com/automation/steps")
+//(features = "classpath:f1.feature, classpath:f2.feature") for multiple features
 public class TestRunner {
 
     public static WebDriver driver;

@@ -95,7 +95,8 @@
 
 </body>
 <script>
-    const username = sessionStorage.getItem("username");
+
+const username = sessionStorage.getItem("username");
 const fname = sessionStorage.getItem("fname");
 const lname = sessionStorage.getItem("fname");
 const role = sessionStorage.getItem("fname");
@@ -164,12 +165,12 @@ async function getProjects(){
         let projectObj = responseBody[i];
         const node = document.createElement("li");
        
-        node.innerHTML = `<details>
+        node.innerHTML = `<details open>
                             <summary>${projectObj.title}</summary>
                             <ul>
                                 <li>Id: ${projectObj.projectId}</li>
                                 <li>About: ${projectObj.about}</li>
-                                <li><details>
+                                <li><details open>
                                     <summary>Test Summary Reports</summary>
                                     <ul id="project${projectObj.projectId}Summaries"></ul>
                                 </details></li>
@@ -204,15 +205,15 @@ async function getSummaries(projectId){
     for (let i = 0; i < responseBody.length; i++){
         let summaryObj = responseBody[i];
         const node = document.createElement("li");
-        summarySelector.innerHTML += `<option value="${summaryObj.summaryId}">${summaryObj.summaryId}</option>`;
+        summarySelector.innerHTML += `<option value="${summaryObj.summaryId}">${summaryObj.reasonForTesting}</option>`;
         
         if (summaryObj.projectId === projectId){
             
-            node.innerHTML = `<details>
-                                <summary>${summaryObj.summaryId}</summary>
+            node.innerHTML = `<details open>
+                                <summary>${summaryObj.reasonForTesting}</summary>
                                 <ul>
-                                    <li>Reason: ${summaryObj.reasonForTesting}</li>
-                                    <li><details>
+                                    <li>Summary Id: ${summaryObj.summaryId}</li>
+                                    <li><details open>
                                         <summary>Test Cases</summary>
                                         <ul id="summary${summaryObj.summaryId}Cases"></ul>
                                     </details></li>
@@ -247,11 +248,11 @@ async function getCases(summaryId){
         
         if (caseObj.summaryId === summaryId && (caseObj.testedBy === username || caseObj.testedBy === null || username === "manager")){
             
-            node.innerHTML = `<details>
-                                <summary>${caseObj.caseId}</summary>
+            node.innerHTML = `<details open>
+                                <summary>${caseObj.featureTested}</summary>
                                 <ul>
+                                    <li>Case Id: ${caseObj.caseId}</li>
                                     <li>Tested By: ${caseObj.testedBy}</li>
-                                    <li>Feature Tested: ${caseObj.featureTested}</li>
                                     <li>Result: ${caseObj.result}</li>
                                     <li><button id="delete${caseObj.caseId}" onclick="deleteCase(${caseObj.caseId})">Delete</button></li>
                                 </ul>
@@ -288,6 +289,7 @@ function createRow(defectObj){
     const node = document.createElement("tr");
    
     node.setAttribute("id", `row${defectObj.defectId}`);
+    node.setAttribute("class", "defectRow");
 
     if (role === "manager"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
@@ -335,15 +337,29 @@ function createRow(defectObj){
 }
 
 function updateRow(defectId, selectorValue){
-    if (selectorValue === "Accepted"){
-        document.getElementById(`statusTD${defectId}`).innerHTML = "Accepted";
+    
+    
+    if (role === "manager"){        
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
+        document.getElementById(`selector${defectId}`).innerHTML = `<option value="Pending">Pending</option>
+                                                                    <option value="Accepted">Accepted</option>
+                                                                    <option value="Declined">Declined</option>
+                                                                    <option value="Rejected">Rejected</option>
+                                                                    <option value="Fixed">Fixed</option>
+                                                                    <option value="Shelved">Shelved</option>`;
+
+    } else if (selectorValue === "Accepted"){
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
         document.getElementById(`selector${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
                                                                     <option value="Fixed">Fixed</option>
                                                                     <option value="Shelved">Shelved</option>`;
     } else {
-        let row = document.getElementById(`row${defectId}`);
-        row.remove();
+        
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
+        document.getElementById(`selector${defectId}`).remove();
+        document.getElementById(`update${defectId}`).remove();
     }
+    
 }
 
 async function createProject() {
@@ -484,6 +500,12 @@ async function Assign() {
         let responseBody = await httpResponse.json(); 
         alert(responseBody.detail);
     }
+    
+    let defectRows = document.getElementsByClassName("defectRow");
+    while(defectRows[0]){
+        defectRows[0].parentNode.removeChild(defectRows[0]);
+    }
+    getDefects();  
 }
 </script>
 </html>

@@ -67,12 +67,12 @@ async function getProjects(){
         let projectObj = responseBody[i];
         const node = document.createElement("li");
        
-        node.innerHTML = `<details>
+        node.innerHTML = `<details open>
                             <summary>${projectObj.title}</summary>
                             <ul>
                                 <li>Id: ${projectObj.projectId}</li>
                                 <li>About: ${projectObj.about}</li>
-                                <li><details>
+                                <li><details open>
                                     <summary>Test Summary Reports</summary>
                                     <ul id="project${projectObj.projectId}Summaries"></ul>
                                 </details></li>
@@ -107,15 +107,15 @@ async function getSummaries(projectId){
     for (let i = 0; i < responseBody.length; i++){
         let summaryObj = responseBody[i];
         const node = document.createElement("li");
-        summarySelector.innerHTML += `<option value="${summaryObj.summaryId}">${summaryObj.summaryId}</option>`;
+        summarySelector.innerHTML += `<option value="${summaryObj.summaryId}">${summaryObj.reasonForTesting}</option>`;
         
         if (summaryObj.projectId === projectId){
             
-            node.innerHTML = `<details>
-                                <summary>${summaryObj.summaryId}</summary>
+            node.innerHTML = `<details open>
+                                <summary>${summaryObj.reasonForTesting}</summary>
                                 <ul>
-                                    <li>Reason: ${summaryObj.reasonForTesting}</li>
-                                    <li><details>
+                                    <li>Summary Id: ${summaryObj.summaryId}</li>
+                                    <li><details open>
                                         <summary>Test Cases</summary>
                                         <ul id="summary${summaryObj.summaryId}Cases"></ul>
                                     </details></li>
@@ -150,13 +150,13 @@ async function getCases(summaryId){
         
         if (caseObj.summaryId === summaryId && (caseObj.testedBy === username || caseObj.testedBy === null || username === "manager")){
             
-            node.innerHTML = `<details>
-                                <summary>${caseObj.caseId}</summary>
+            node.innerHTML = `<details open>
+                                <summary>${caseObj.featureTested}</summary>
                                 <ul>
+                                    <li>Case Id: ${caseObj.caseId}</li>
                                     <li>Tested By: ${caseObj.testedBy}</li>
-                                    <li>Feature Tested: ${caseObj.featureTested}</li>
                                     <li>Result: ${caseObj.result}</li>
-                                    <li><button onclick="deleteCase(${caseObj.caseId})">Delete</button></li>
+                                    <li><button id="delete${caseObj.caseId}" onclick="deleteCase(${caseObj.caseId})">Delete</button></li>
                                 </ul>
                             </details>`;
             caseList.appendChild(node);       
@@ -165,10 +165,10 @@ async function getCases(summaryId){
 }
 
 async function updateDefect(defectId){
-    let selecterId = "selecter" + defectId;
-    let selecterValue = document.getElementById(selecterId).value;
+    let selectorId = "selector" + defectId;
+    let selectorValue = document.getElementById(selectorId).value;
     let updateInfo = {
-        status: selecterValue
+        status: selectorValue
     }
 
     let updateJSON = JSON.stringify(updateInfo);
@@ -182,7 +182,7 @@ async function updateDefect(defectId){
     let httpResponse = await fetch(`https://bugcatcher.coe.revaturelabs.com/5/defects/${defectId}`, config);
 
     if (httpResponse.status === 204){
-        updateRow(defectId, selecterValue);
+        updateRow(defectId, selectorValue);
     }
 }
 
@@ -191,13 +191,14 @@ function createRow(defectObj){
     const node = document.createElement("tr");
    
     node.setAttribute("id", `row${defectObj.defectId}`);
+    node.setAttribute("class", "defectRow");
 
     if (role === "manager"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
                             <td>${defectObj.desc}</td>
                             <td>${defectObj.assignedTo}</td>
                             <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
-                            <td><select id="selecter${defectObj.defectId}">
+                            <td><select id="selector${defectObj.defectId}">
                                 <option value="Pending">Pending</option>
                                 <option value="Accepted">Accepted</option>
                                 <option value="Declined">Declined</option>
@@ -205,26 +206,26 @@ function createRow(defectObj){
                                 <option value="Fixed">Fixed</option>
                                 <option value="Shelved">Shelved</option>
                             </select></td>
-                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
     }else if (defectObj.status === "Pending"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
                             <td>${defectObj.desc}</td>
                             <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
-                            <td><select id="selecter${defectObj.defectId}">
+                            <td><select id="selector${defectObj.defectId}">
                                 <option value="Accepted">Accepted</option>
                                 <option value="Declined">Declined</option>
                             </select></td>
-                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
     } else if (defectObj.status === "Accepted"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
                             <td>${defectObj.desc}</td>
                             <td id="statusTD${defectObj.defectId}">${defectObj.status}</td>
-                            <td><select id="selecter${defectObj.defectId}">
+                            <td><select id="selector${defectObj.defectId}">
                                 <option value="Rejected">Rejected</option>
                                 <option value="Fixed">Fixed</option>
                                 <option value="Shelved">Shelved</option>
                             </select></td>
-                            <td><button onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
+                            <td><button id="update${defectObj.defectId}" onclick="updateDefect(${defectObj.defectId})">Update</button></td>`;
        
 
     } else {
@@ -237,16 +238,30 @@ function createRow(defectObj){
     defectTable.appendChild(node);
 }
 
-function updateRow(defectId, selecterValue){
-    if (selecterValue === "Accepted"){
-        document.getElementById(`statusTD${defectId}`).innerHTML = "Accepted";
-        document.getElementById(`selecter${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
+function updateRow(defectId, selectorValue){
+    
+    
+    if (role === "manager"){        
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
+        document.getElementById(`selector${defectId}`).innerHTML = `<option value="Pending">Pending</option>
+                                                                    <option value="Accepted">Accepted</option>
+                                                                    <option value="Declined">Declined</option>
+                                                                    <option value="Rejected">Rejected</option>
+                                                                    <option value="Fixed">Fixed</option>
+                                                                    <option value="Shelved">Shelved</option>`;
+
+    } else if (selectorValue === "Accepted"){
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
+        document.getElementById(`selector${defectId}`).innerHTML = `<option value="Rejected">Rejected</option>
                                                                     <option value="Fixed">Fixed</option>
                                                                     <option value="Shelved">Shelved</option>`;
     } else {
-        let row = document.getElementById(`row${defectId}`);
-        row.remove();
+        
+        document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
+        document.getElementById(`selector${defectId}`).remove();
+        document.getElementById(`update${defectId}`).remove();
     }
+    
 }
 
 async function createProject() {
@@ -387,4 +402,10 @@ async function Assign() {
         let responseBody = await httpResponse.json(); 
         alert(responseBody.detail);
     }
+    
+    let defectRows = document.getElementsByClassName("defectRow");
+    while(defectRows[0]){
+        defectRows[0].parentNode.removeChild(defectRows[0]);
+    }
+    getDefects();  
 }
