@@ -50,7 +50,7 @@ public class Tester {
         this.updateDefectButton.click();
     }
 
-    /*******************
+  
     //Create project methods
     public void enterProjectTitle(String title){
         this.titleInput.sendKeys(title);
@@ -99,7 +99,7 @@ public class Tester {
         String deleteId = "delete" + id;
         driver.findElement(By.id(deleteId)).click();
     }
-    *********************/
+   
 
 
 }

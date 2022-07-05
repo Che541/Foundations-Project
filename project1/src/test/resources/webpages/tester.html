@@ -6,9 +6,9 @@
 <body>
     <h1>Tester Page</h1>
     <table id="defectTable">
-        <tr>
-            <th colspan="5"><h1>Defects</h1></th>
-        </tr>
+        <caption>
+            <h1>Defects</h1>
+        </caption>
         <tr>
             <th>Defect Id</th>
             <th>Description</th>
@@ -33,9 +33,9 @@
 
     
     <table>
-        <tr>
-            <th colspan="3"><h1>Create New Project</h1></th>
-        </tr>
+        <caption>
+            <h1>Create New Project</h1>
+        </caption>
         <tr>
             <th>Project Title</th>
             <th>About</th>
@@ -50,9 +50,9 @@
 
     
     <table>
-        <tr>
-            <th colspan="3"><h1>Create New Test Summary Report</h1></th>
-        </tr>
+        <caption>
+            <h1>Create New Test Summary Report</h1>
+        </caption>
         <tr>
             <th>Project</th>
             <th>Reason</th>
@@ -68,9 +68,9 @@
     </table>
 
     <table>
-        <tr>
-            <th colspan="4"><h1>Create New Test Case</h1></th>
-        </tr>
+        <caption>
+            <h1>Create New Test Case</h1>
+        </caption>
         <tr>
             <th>Summary</th>
             <th>Feature</th>
@@ -95,16 +95,14 @@
 
 </body>
 <script>
-
 const username = sessionStorage.getItem("username");
 const fname = sessionStorage.getItem("fname");
-const lname = sessionStorage.getItem("fname");
-const role = sessionStorage.getItem("fname");
-//document.getElementById("name").innerHTML = username;
+const lname = sessionStorage.getItem("lname");
+const role = sessionStorage.getItem("role");
 
 getDefects();
 getProjects();
-if(role === "manager"){
+if(role === "Manager"){
     getTesters();
 }
 
@@ -120,7 +118,7 @@ async function getDefects(){
     
     for (let i = 0; i < responseBody.length; i++){
         let defectObj = responseBody[i];
-        if(defectObj.assignedTo === username || role === "manager"){
+        if(defectObj.assignedTo === username || role === "Manager"){
             createRow(defectObj);   
         }
     }
@@ -246,7 +244,7 @@ async function getCases(summaryId){
         const node = document.createElement("li");
         node.setAttribute("id", `li${caseObj.caseId}`);
         
-        if (caseObj.summaryId === summaryId && (caseObj.testedBy === username || caseObj.testedBy === null || username === "manager")){
+        if (caseObj.summaryId === summaryId && (caseObj.testedBy === username || caseObj.testedBy === null || role === "Manager")){
             
             node.innerHTML = `<details open>
                                 <summary>${caseObj.featureTested}</summary>
@@ -291,7 +289,7 @@ function createRow(defectObj){
     node.setAttribute("id", `row${defectObj.defectId}`);
     node.setAttribute("class", "defectRow");
 
-    if (role === "manager"){
+    if (role === "Manager"){
         node.innerHTML =   `<td>${defectObj.defectId}</td>
                             <td>${defectObj.desc}</td>
                             <td>${defectObj.assignedTo}</td>
@@ -339,7 +337,7 @@ function createRow(defectObj){
 function updateRow(defectId, selectorValue){
     
     
-    if (role === "manager"){        
+    if (role === "Manager"){        
         document.getElementById(`statusTD${defectId}`).innerHTML = `${selectorValue}`;
         document.getElementById(`selector${defectId}`).innerHTML = `<option value="Pending">Pending</option>
                                                                     <option value="Accepted">Accepted</option>
@@ -507,5 +505,6 @@ async function Assign() {
     }
     getDefects();  
 }
+
 </script>
 </html>

@@ -5,16 +5,31 @@
     <title>Login Page</title>
 </head>
 <body>
-    <h1>Login Page</h1>
-    <label><b>Username:</b></label>
-    <Input type="text" id="username">
-    <br>
-    <label><b>Password:</b></label>
-    <Input type="password" id="password">
-    <br>
-    <button id="submitButton" onclick="login()">Login</button>
 
-    
+    <h1>Login Page</h1>
+    <table>
+        <tr>
+            <td>
+                <label for="username"><b>Username:</b></label>
+            </td>
+            <td> 
+                <Input type="text" id="username">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="password"><b>Password:</b></label>
+            </td>
+            <td>
+                <Input type="password" id="password"> 
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">
+                <button id="submitButton" onclick="login()">Login</button>
+            </td>
+        </tr>
+    </table>
 </body>
 <script>
     
@@ -47,7 +62,7 @@
 
             if(responseBody.role === "Tester"){
                 window.location.href = "tester.html";
-            } else {
+            } else if (responseBody.role === "Manager") {
                 window.location.href = "manager.html";
             }
         } else {

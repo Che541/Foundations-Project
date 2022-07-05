@@ -16,7 +16,7 @@ import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "classpath:features", glue = "com/automation/steps")
+@CucumberOptions(features = {"classpath:features/login.feature","classpath:features/manager.feature","classpath:features/tester.feature","classpath:features/backlog.feature"},glue = "com/automation/steps")
 //(features = "classpath:f1.feature, classpath:f2.feature") for multiple features
 public class TestRunner {
 

@@ -74,8 +74,8 @@ public class Project1Steps {
         TestRunner.manager.clickAssignButton();
     }
 
-    @Then("the new defect is created and assigned")
-    public void the_new_defect_is_created(){
+    @Then("the API receives the command")
+    public void the_API_receives_the_command(){
         boolean alertExists;
         if (TestRunner.wait.until(ExpectedConditions.alertIsPresent()) == null){
             alertExists = false;
@@ -84,7 +84,6 @@ public class Project1Steps {
             Alert alert = TestRunner.driver.switchTo().alert();
             alert.accept();
         }
-
         Assert.assertEquals(true, alertExists); 
     }
 
@@ -110,27 +109,32 @@ public class Project1Steps {
     }
 
 
-    @Given("the tester is logged in to the tester homepage")
-    public void the_tester_is_logged_in_to_the_tester_homepage() {
-        //reset defect to pending
-        TestRunner.driver.get("File://C:/Users/nixen/OneDrive/Desktop/Projects/Project1/Automation-Project/Foundations-Project/project1/src/test/resources/webpages/login.html");
-        TestRunner.login.enterUsername("manager");
-        TestRunner.login.enterPassword("password");
-        TestRunner.login.clickButton();  
-        TestRunner.wait.until(ExpectedConditions.titleIs("Manager Page"));
+    @Given("the tester has a pending defect")
+    public void the_tester_has_a_pending_defect() {
+        TestRunner.login.loginUser("manager", "password");
         TestRunner.manager.selectDefectStatus("Pending");
         TestRunner.manager.clickUpdateDefectButton();
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Pending"));
+    }
 
-        TestRunner.driver.get("File://C:/Users/nixen/OneDrive/Desktop/Projects/Project1/Automation-Project/Foundations-Project/project1/src/test/resources/webpages/login.html");
-        TestRunner.login.enterUsername("tester");
-        TestRunner.login.enterPassword("password");
-        TestRunner.login.clickButton();
-        TestRunner.wait.until(ExpectedConditions.titleIs("Tester Page"));
+    @Given("the tester has an accepted defect")
+    public void the_tester_has_an_accepted_defect() {
+        TestRunner.login.loginUser("manager", "password");
+        TestRunner.manager.selectDefectStatus("Accepted");
+        TestRunner.manager.clickUpdateDefectButton();
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Accepted"));
+    }
+
+    @Given("the tester is logged in to the tester homepage")
+    public void the_tester_is_logged_in_to_the_tester_homepage() {
+        TestRunner.login.loginUser("tester", "password");
     }
 
 	@Then("the tester should be able to view defects assigned to them")
     public void the_tester_should_be_able_to_view_defects_assigned_to_them() {  
-        Boolean isPresent = TestRunner.driver.findElements(By.id("selector52984")).size() > 0;
+        Boolean isPresent = TestRunner.driver.findElements(By.id("statusTD52984")).size() > 0;
         Assert.assertEquals(true, isPresent);   
     }
 
@@ -152,6 +156,110 @@ public class Project1Steps {
         Assert.assertEquals("Accepted", status); 
     }
 
+    @When("the tester selects the decline option")
+    public void the_tester_selects_the_decline_option() {
+        TestRunner.tester.selectDefectStatus("Declined");
+    }
 
-    
+    @When("the tester should decline the defect")
+    public void the_tester_should_decline_the_defect() {
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Declined"));
+        String status = elem.getAttribute("innerHTML");
+        Assert.assertEquals("Declined", status); 
+    }
+
+
+    @When("the tester selects the fixed option")
+    public void the_tester_selects_the_fixed_option() {
+        TestRunner.tester.selectDefectStatus("Fixed");
+    }
+
+    @Then("the tester should declare the defect as fixed")
+    public void the_tester_should_declare_the_defect_as_fixed() {
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Fixed"));
+        String status = elem.getAttribute("innerHTML");
+        Assert.assertEquals("Fixed", status); 
+    }
+
+    @When("the tester selects the reject option")
+    public void the_tester_selects_the_reject_option() {
+        TestRunner.tester.selectDefectStatus("Rejected");
+    }
+
+    @Then("the tester should reject the defect")
+    public void the_tester_should_reject_the_defect() {
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Rejected"));
+        String status = elem.getAttribute("innerHTML");
+        Assert.assertEquals("Rejected", status); 
+    }
+
+    @When("the tester selects the shelved option")
+    public void the_tester_selects_the_shelved_option() {
+        TestRunner.tester.selectDefectStatus("Shelved");
+    }
+
+    @Then("the tester should shelve the defect")
+    public void the_tester_should_shelve_the_defect() {
+        WebElement elem = TestRunner.driver.findElement(By.id("statusTD52984"));
+        TestRunner.wait.until(ExpectedConditions.textToBePresentInElement(elem, "Shelved"));
+        String status = elem.getAttribute("innerHTML");
+        Assert.assertEquals("Shelved", status); 
+    }
+
+
+
+    @When("the tester enters a project title")
+    public void the_tester_enters_a_project_title() {
+        TestRunner.tester.enterProjectTitle("test");
+    }
+
+    @When("the tester enters info about the project")
+    public void the_tester_enters_info_about_the_project() {
+        TestRunner.tester.enterAboutProject("Created by automated testing");
+    }
+
+    @When("the tester clicks the create project button")
+    public void the_tester_clicks_the_create_project_button() {
+        TestRunner.tester.clickCreateProjectButton();
+    }
+
+    @When("the tester selects a project to attach the test summary report to")
+    public void the_tester_selects_a_project_to_attach_the_test_summary_report_to() {
+        TestRunner.tester.selectProject();
+    }
+
+    @When("the tester enters a reason for testing")
+    public void the_tester_enters_a_reason_for_testing() {
+        TestRunner.tester.enterSummaryReason("Automated testing");
+    }
+
+    @When("the tester clicks the create summary button")
+    public void the_tester_clicks_the_create_summary_button() {
+        TestRunner.tester.clickCreateSummaryButton();
+    }
+
+    @When("the tester selects a test summary report to attach the test case to")
+    public void the_tester_selects_a_test_summary_report_to_attach_the_test_case_to() {
+        TestRunner.tester.selectSummary();
+    }
+
+    @When("the tester enters the feature tested")
+    public void the_tester_enters_the_feature_tested() {
+        TestRunner.tester.enterCaseFeature("Automated Testing");
+    }
+
+    @When("the tester selects a result")
+    public void the_tester_selects_a_result() {
+        TestRunner.tester.selectResult();
+    }
+
+    @When("the testers clicks the create test case button")
+    public void the_testers_clicks_the_create_test_case_button() {
+    TestRunner.tester.clickCreateCaseButton();
+    }
+
+
 }
